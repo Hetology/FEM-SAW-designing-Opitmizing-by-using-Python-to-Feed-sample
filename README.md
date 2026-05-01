@@ -6,8 +6,9 @@ Bạn đã quá chán việc mô phỏng FEM cho thiết bị SAW bằng app ANS
 Hiện tại, tôi cung cấp mẫu bằng phương pháp LHS ( Latin Hypercube Sampling )
 
 Tôi tổ chức chương trình tổ chức thành 2 file : 
-|-run_auto.py
-|-Saw_main.txt (đây thường là file session hoặc là code bạn thường dùng để lặp lại quy trình á)
+|-run_saw_auto.py
+
+|-SAW_main.txt (đây thường là file session hoặc là code bạn thường dùng để lặp lại quy trình á)
 
 Chương trình này hiện có sẵn 200 mẫu, với code cho (đế : ST-QUARTZ, Điện cực IDT : Nhôm và lớp nhạy FeNi ).
 
@@ -25,7 +26,11 @@ You’re probably tired of simulating FEM for SAW devices with ANSYS 15.0, right
 
 Currently, I provide samples using the LHS (Latin Hypercube Sampling) method.
 
-I organize the program into 2 files: |-run_auto.py |-Saw_main.txt (this is usually the session file or the code you normally use to repeat the process).
+I organize the program into 2 files:
+
+|-run_saw_auto.py 
+
+|-SAW_main.txt (this is usually the session file or the code you normally use to repeat the process).
 
 This program currently has 200 samples, with code for (substrate: ST-QUARTZ, IDT electrode: Aluminum, and sensitive layer FeNi).
 
