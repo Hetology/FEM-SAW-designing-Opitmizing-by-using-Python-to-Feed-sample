@@ -33,8 +33,6 @@ if not os.path.exists(OUTPUT_CSV):
 # ==========================================
 def extract_features_from_vout(filepath):
     try:
-        # PRVAR xuất file có header rất loằng ngoằng, ta dùng comment=' ' 
-        # hoặc skip những dòng không chứa số
         data = []
         with open(filepath, 'r') as f:
             lines = f.readlines()
@@ -93,7 +91,7 @@ with tqdm(total=NUM_SAMPLES, desc="Tiến độ tổng", unit="case") as pbar:
 
         pbar.write(f"\n[{i+1}/{NUM_SAMPLES}] Đang chạy...")
 
-        # LỆNH GỌI CỰC KỲ ĐƠN GIẢN: Không dùng -j để tránh Error 32
+        # LỆNH GỌI ANSYS
         ansys_cmd = [ANSYS_EXE_PATH, "-b", "-np", "6", "-i", MACRO_FILE, "-o", "ansys_log.txt"]
         
         subprocess.run(ansys_cmd, cwd=WORK_DIR)
@@ -108,7 +106,7 @@ with tqdm(total=NUM_SAMPLES, desc="Tiến độ tổng", unit="case") as pbar:
                 pbar.write(f" -> OK! | f0={f0:.2f}MHz")
                 os.remove(vout_path)
             
-            # Đổi tên file kết quả để lưu trữ (Nếu fen cần giữ .rst)
+            # Đổi tên file kết quả để lưu trữ 
             if os.path.exists("file.rst"):
                 try: os.rename("file.rst", f"SAW_{i+1}.rst")
                 except: pass
