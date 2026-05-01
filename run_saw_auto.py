@@ -17,7 +17,7 @@ OUTPUT_CSV = "SAW_AI_Dataset_auto_save.csv"
 ANSYS_EXE_PATH = r"C:\Program Files\ANSYS Inc\v150\ansys\bin\winx64\ansys150.exe"
 MACRO_FILE = "SAW_main.txt"
 
-# Không gian thiết kế (Giữ nguyên)
+# Không gian thiết kế 
 bounds_lower = [21, 8, 4000, 100, 340, 62.5]
 bounds_upper = [29, 12, 6000, 400, 1340, 81.5]
 
@@ -29,7 +29,7 @@ if not os.path.exists(OUTPUT_CSV):
     pd.DataFrame(columns=["Case_ID", "numIDT", "d1_um", "D_um", "h1_um", "h3_nm", "E3_GPa", "f0_MHz", "A0", "BW3dB_MHz"]).to_csv(OUTPUT_CSV, index=False)
 
 # ==========================================
-# 2. HÀM FFT (GIỮ NGUYÊN LOGIC 6H SÁNG)
+# 2. HÀM FFT
 # ==========================================
 def extract_features_from_vout(filepath):
     try:
@@ -74,9 +74,9 @@ def extract_features_from_vout(filepath):
     except Exception:
         return None, None, None
 # ==========================================
-# 3. CHẠY VÒNG LẶP (NGUYÊN BẢN)
+# 3. CHẠY VÒNG LẶP 
 # ==========================================
-print("\nBẮT ĐẦU CHẠY MÔ PHỎNG (REVERT TO STABLE):")
+print("\nBẮT ĐẦU CHẠY MÔ PHỎNG :")
 
 with tqdm(total=NUM_SAMPLES, desc="Tiến độ tổng", unit="case") as pbar:
     for i, sample in enumerate(scaled_samples):
