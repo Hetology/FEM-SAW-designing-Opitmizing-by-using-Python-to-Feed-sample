@@ -6,6 +6,7 @@ Bạn đã quá chán việc mô phỏng FEM cho thiết bị SAW bằng app ANS
 Hiện tại, tôi cung cấp mẫu bằng phương pháp LHS ( Latin Hypercube Sampling )
 
 Tôi tổ chức chương trình tổ chức thành 2 file : 
+
 |-run_saw_auto.py
 
 |-SAW_main.txt (đây thường là file session hoặc là code bạn thường dùng để lặp lại quy trình á)
