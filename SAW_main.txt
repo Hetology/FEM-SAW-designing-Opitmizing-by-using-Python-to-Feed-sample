@@ -1,0 +1,134 @@
+!========================================================================
+! CHƯƠNG TRÌNH MÔ PHỎNG SAW: PHIÊN BẢN TÔN TRỌNG NGUYÊN BẢN (FIXED POST)
+!========================================================================
+/CLEAR,START
+/CONFIG,NOELDB,1        
+/PREP7  
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+KEYW,PR_ELMAG,1 
+KEYW,MAGELC,1   
+KEYW,PR_MULTI,1 
+/GO 
+
+! --- 1. THÔNG SỐ (PHỤC VỤ PYTHON) ---
+/INPUT, parameters, txt
+
+*SET,RIDT,(4*numIDT-1)*d1  
+*SET,L,(L1+L2+2*RIDT+D)    
+*SET,h,500e-9      
+*SET,k,(2*d1)       
+*SET,Ln,(D-2*k)     
+*SET,tol,2e-6       ! Dùng dung sai 2um để gắp Node chắc chắn hơn
+
+! --- 2. KIỂU PHẦN TỬ & VẬT LIỆU (4-NODE) ---
+ET,1,PLANE223 $ KEYOPT,1,1,1001 $ KEYOPT,1,3,2
+ET,2,PLANE42
+! (Giữ nguyên toàn bộ phần khai báo MPDATA vật liệu của bạn ở đây...)
+MPTEMP,1,0 $ MPDATA,DENS,1,,2649 
+TB,ANEL,1,1,21,0 $ TBTEMP,0
+TBDATA,1,8.726E10,6.57E09,1.195E10,-1.718E10,0,0
+TBDATA,7,8.726E10,1.195E10,1.718E10,0,0,1.058E11
+TBDATA,13,0,0,0,5.715E10,0,0
+TBDATA,19,5.715E10,-1.718E10,4.035E10
+MPDATA,PERX,1,,4.43 $ MPDATA,PERY,1,,4.54 $ MPDATA,PERZ,1,,4.52
+TB,PIEZ,1,,,0 $ TBMODIF,1,1,0.17 $ TBMODIF,2,1,-0.04 $ TBMODIF,3,1,-0.13 $ TBMODIF,4,1,0.08 $ TBMODIF,5,2,0.07 $ TBMODIF,5,3,-0.07 $ TBMODIF,6,2,-0.1 $ TBMODIF,6,3,0.11
+MPTEMP,1,0 $ MPDATA,DENS,2,,2697 $ MPDATA,EX,2,,7.03E10 $ MPDATA,PRXY,2,,0.345 
+MPTEMP,1,0 $ MPDATA,DENS,3,,rho3 $ MPDATA,EX,3,,E3 $ MPDATA,PRXY,3,,nu3
+
+! --- 3. DỰNG HÌNH & GÁN THUỘC TÍNH (GIỮ NGUYÊN) ---
+RECTNG,0,L,0,h1     
+*DO,i,0,2*numIDT-1 
+  RECTNG, L1+2*i*d1, L1+(2*i+1)*d1, h1, h1+h   
+*ENDDO
+*DO,i,0,2*numIDT-1 
+  RECTNG, L1+D+RIDT+2*i*d1, L1+D+RIDT+(2*i+1)*d1, h1, h1+h   
+*ENDDO
+RECTNG, L1+RIDT+k, L1+RIDT+k+Ln, h1, h1+h3
+AGLUE,ALL           
+
+ALLSEL,ALL $ AATT,1,,1           
+ASEL,S,LOC,Y,h1+1e-9,h1+h $ AATT,2,,2           
+ASEL,S,LOC,Y,h1+1e-9,h1+h3 $ ASEL,R,LOC,X,L1+RIDT+k/2, L1+RIDT+k+Ln-k/2 $ AATT,3,,2           
+ALLSEL,ALL
+
+! --- 4. CHIA LƯỚI ---
+ESIZE, 4e-6
+LSEL,S,LOC,Y,0 $ LESIZE,ALL,100e-6 $ ALLSEL,ALL
+SHPP,WARN           
+ASEL,S,LOC,Y,h1+1e-9,h1+10e-6 $ MSHAPE,0,2D $ MSHKEY,1 $ AMESH,ALL           
+ASEL,S,LOC,Y,0,h1/2 $ MSHKEY,0 $ MSHAPE,1,2D $ AMESH,ALL           
+ALLSEL,ALL
+
+! --- 5. ĐIỀU KIỆN BIÊN & TẢI TRỌNG (GIỮ NGUYÊN) ---
+*DIM, IDT_VOLT, TABLE, 4, 1, 1, TIME
+IDT_VOLT(1,0,1)=0.0 $ IDT_VOLT(1,1,1)=0.0
+IDT_VOLT(2,0,1)=10e-9 $ IDT_VOLT(2,1,1)=100.0
+IDT_VOLT(3,0,1)=11e-9 $ IDT_VOLT(3,1,1)=0.0
+IDT_VOLT(4,0,1)=2000e-9 $ IDT_VOLT(4,1,1)=0.0
+
+NSEL,S,LOC,Y,0 $ D,ALL,VOLT,0 $ D,ALL,UX,0 $ D,ALL,UY,0 $ ALLSEL,ALL
+
+*SET,nelec,2*numIDT
+*DIM,NIDT,ARRAY,nelec
+*DO,i,1,2*numIDT
+  ALLSEL,ALL
+  NSEL,S,LOC,Y,h1-tol,h1+h+tol
+  NSEL,R,LOC,X,L1+(2*i-2)*d1-tol,L1+(2*i-1)*d1+tol
+  *GET,ncount,NODE,0,COUNT
+  *IF,ncount,GT,0,THEN
+    CP,i,VOLT,ALL
+    *GET,NIDT(i),NODE,0,NUM,MIN
+  *ELSE
+    NIDT(i)=0
+  *ENDIF
+*ENDDO
+ALLSEL,ALL
+FINISH
+
+! --- 6. BỘ GIẢI (SPARSE DIRECT) ---
+/SOLU
+ANTYPE,TRANS $ TRNOPT,FULL $ EQSLV,SPARSE
+RESCONTROL,DEFINE,NONE $ OUTPR,ALL,NONE $ OUTRES,ERASE
+
+! CHỈ LƯU DỮ LIỆU Ở VÙNG NGÕ RA ĐỂ GIẢM DUNG LƯỢNG FILE .RST
+ALLSEL,ALL
+NSEL,S,LOC,Y,h1-tol,h1+h+tol
+NSEL,R,LOC,X,L1+D+RIDT-tol,L1+D+3*d1+RIDT+tol
+CM, IDT_OUT_NODES, NODE
+OUTRES,NSOL,ALL,IDT_OUT_NODES 
+ALLSEL,ALL
+
+TIME, 1800e-9 $ NSUBST,3600,,,1 $ KBC,1
+*DO,i,1,2*numIDT,2
+  *IF,NIDT(i),GT,0,THEN $ D,NIDT(i),VOLT, %IDT_VOLT% $ *ENDIF
+*ENDDO
+*DO,i,2,2*numIDT,2
+  *IF,NIDT(i),GT,0,THEN $ D,NIDT(i),VOLT, 0 $ *ENDIF
+*ENDDO
+TIMINT,1,STRUCT $ TIMINT,1,ELECT $ TINTP,,0.25,0.5,0.5,0.5,-1
+SOLVE   
+FINISH
+
+! --- 7. TRÍCH XUẤT KẾT QUẢ (PHẦN ĐÃ EDIT ĐỂ MỞ FILE) ---
+/POST26
+FILE,file,rst
+NUMVAR,200
+
+! Tìm node gần tọa độ ngõ ra nhất
+*SET, x_out, L1+D+RIDT+(d1/2)
+*SET, y_out, h1
+nodeID = node(x_out, y_out, 0)
+
+*IF, nodeID, GT, 0, THEN
+    NSOL, 2, nodeID, VOLT, , Vout
+    
+    ! Chuyển hướng đầu ra của ANSYS vào file Vout.txt
+    /OUTPUT, Vout, txt
+    PRVAR, 2    ! Xuất biến số 2 (Vout) ra file - y hệt cách gen privar.lis
+    /OUTPUT, SCREEN
+*ENDIF
+
+FINISH
+/EXIT, NOSAVE
