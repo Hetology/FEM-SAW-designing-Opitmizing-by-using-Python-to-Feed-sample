@@ -18,7 +18,7 @@ Nhưng tôi khuyến khích 6 processor là đủ dùng rồi, trung bình 1 cas
 
 Có thể bạn sẽ phải chỉnh lại một vài chỗ như phần vật liệu ma trận, lớp nhạy và địa chỉ file ansys150.exe nằm ở đâu. 
 
-Chuột phải để mở thư mục đang đứng bằng terminal, sau đó gõ lệnh "python ./run_auto.py"
+Chuột phải để mở thư mục đang đứng bằng terminal, sau đó gõ lệnh "python ./run_saw_auto.py"
 
 
 ////////////////////////////////////////////
@@ -39,6 +39,6 @@ If your machine has 8 cores or you want it to run faster, in the run_auto.py fil
 
 You may need to adjust a few things such as the matrix material section, the sensitive layer, and the location of the ansys150.exe file.
 
-Right-click to open the current folder in the terminal, then type the command "python ./run_auto.py"
+Right-click to open the current folder in the terminal, then type the command "python ./run_saw_auto.py"
 
 Product by HetoLogy
