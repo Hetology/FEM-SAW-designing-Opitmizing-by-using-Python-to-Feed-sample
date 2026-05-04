@@ -2,9 +2,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Please Install Require Components: pip install pandas numpy scikit-learn xgboost scipy matplotlib seaborn
-
-Bạn đã quá chán việc mô phỏng FEM cho thiết bị SAW bằng app ANSYS 15.0 rồi đúng không ? Mỗi lần chạy đều rất lâu và quy trình lặp lại đều rất chán. Đừng lo, tôi hiểu và đây là giải pháp tự động chạy mô phỏng. 
-
 Hiện tại, tôi cung cấp mẫu bằng phương pháp LHS ( Latin Hypercube Sampling )
 
 Tôi tổ chức chương trình tổ chức thành 2 file : 
