@@ -92,7 +92,7 @@ with tqdm(total=NUM_SAMPLES, desc="Tiến độ tổng", unit="case") as pbar:
         pbar.write(f"\n[{i+1}/{NUM_SAMPLES}] Đang chạy...")
 
         # LỆNH GỌI ANSYS
-        ansys_cmd = [ANSYS_EXE_PATH, "-b", "-np", "6", "-i", MACRO_FILE, "-o", "ansys_log.txt"]
+        ansys_cmd = [ANSYS_EXE_PATH, "-b", "-np", "0", "-i", MACRO_FILE, "-o", "ansys_log.txt"]
         
         subprocess.run(ansys_cmd, cwd=WORK_DIR)
 
